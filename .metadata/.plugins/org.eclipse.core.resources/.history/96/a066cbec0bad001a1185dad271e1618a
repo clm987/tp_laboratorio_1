@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "LinkedList.h"
+#include "Employee.h"
+#include "IOdata.h"
+
+/** \brief Parsea los datos los datos de los empleados desde el archivo data.csv (modo texto).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int parser_EmployeeFromText(FILE* pFile , LinkedList* pArrayListEmployee)
+{
+	char bufferId[128];
+	char bufferNombre[128];
+	char bufferHorasTrabajadas[128];
+	char bufferSalario[128];
+	int cont = 0;
+	int cant = 0;
+	int retCode = -1;
+	Employee* pAuxEmployee = NULL;
+
+	fscanf(pFile, "%[^,],%[^,],%[^,],%[^\n]\n", bufferId, bufferNombre, bufferHorasTrabajadas, bufferSalario);
+	printf("%s   %s    %s    %s\n\n", bufferId, bufferNombre, bufferHorasTrabajadas, bufferSalario);
+
+	while( !feof(pFile) )
+	{
+	cant = fscanf(pFile, "%[^,],%[^,],%[^,],%[^\n]\n", bufferId, bufferNombre, bufferHorasTrabajadas, bufferSalario);
+		if( cant < 4)
+		{break;}
+
+		pAuxEmployee = employee_newParametros(bufferId, bufferNombre, bufferHorasTrabajadas, bufferSalario);
+
+		if(pAuxEmployee != NULL)
+		{
+			ll_add(pArrayListEmployee, pAuxEmployee);
+			cont++;
+			printEmployees(pAuxEmployee);
+			retCode = 0;
+		}
+
+	}
+
+	printf("\n %d leidos con exito", cont);
+	system("pause");
+	free(pArrayListEmployee);
+	free(pAuxEmployee);
+    return retCode;
+}
+
+/** \brief Parsea los datos los datos de los empleados desde el archivo data.csv (modo binario).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int parser_EmployeeFromBinary(FILE* pFile , LinkedList* pArrayListEmployee)
+{
+	int retorno =-1;
+	    int auxID;
+	    char auxNombre[128];
+	    int auxHorasTrabajadas;
+	    int auxSueldo;
+
+
+
+	    if(pFile!= NULL && pArrayListEmployee!=NULL)
+	    {
+	        Employee* auxiliarPunteroEmployee;
+	        int contador=0;
+	        do
+	        {
+	            auxiliarPunteroEmployee = employee_new();
+	            fread(auxiliarPunteroEmployee,sizeof(Employee),1,pFile);
+
+	            if(!employee_getEmployee(auxiliarPunteroEmployee,&auxID,auxNombre,&auxHorasTrabajadas,&auxSueldo)&& !feof(pFile))
+	            {
+	               // if( funciones_isID(auxID) == 1 &&
+	                 //       funciones_isName(auxNombre) == 1 &&
+	                   //     funciones_isHorasTrabajadas(auxHorasTrabajadas) == 1 &&
+	                    //    funciones_isSueldo(auxSueldo))
+	               // {
+	                    ll_add(pArrayListEmployee,auxiliarPunteroEmployee);
+	                    contador++;
+
+	               // }
+
+	            }
+
+
+	        }
+	        while(!feof(pFile));
+	        fclose(pFile);
+	        printf("\n Se Cargaron: %i Empleados\n",contador);
+	        retorno = 0;
+
+	    }
+
+	    return retorno;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*	int retCode = -1;
+	int readCont = 0;
+	int cont = 0;
+	int cont1 = 0;
+	int auxId;
+	int auxSueldo;
+	int auxHoras;
+	char bufferNombre[128];
+
+	Employee* pAuxEmployee;
+
+		if(pFile != NULL && pArrayListEmployee != NULL)
+		{
+			while(!feof(pFile))
+			{
+				cont1++;
+
+			pAuxEmployee = employee_new();
+
+			readCont = fread(pAuxEmployee,sizeof(Employee),1,pFile);
+			printf("\n El tamaño de employee es: %d", sizeof(Employee));
+			printf("\n%d valor de readCont.", readCont);
+
+			if(!getEmployee(&auxId, bufferNombre, &auxHoras, &auxSueldo, pAuxEmployee) && readCont == 1)
+				{
+						ll_add(pArrayListEmployee, pAuxEmployee);
+						cont++;
+						printEmployees(pAuxEmployee);
+				}
+			}
+		retCode = 0;
+		fclose(pFile);
+		free(pArrayListEmployee);
+		free(pAuxEmployee);
+		printf("\n%d empleados cargados.", cont);
+		printf("\n%d paso por el while.", cont1);
+		}
+*/
+  //  return retCode;
+}

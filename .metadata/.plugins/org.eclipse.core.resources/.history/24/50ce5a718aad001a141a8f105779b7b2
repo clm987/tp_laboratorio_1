@@ -1,0 +1,340 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "LinkedList.h"
+#include "Controller.h"
+#include "Employee.h"
+#include "IOdata.h"
+
+static int esNumerica(char* cadena, int limite);
+
+//***********************************
+
+Employee* employee_new()
+{
+	Employee* this = (Employee*) malloc(sizeof(Employee));
+	if(this != NULL)
+	{
+		this->id = 0;
+		strcpy(this->nombre,"");
+		this->horasTrabajadas = 0;
+		this->sueldo = 0;
+
+	}
+	return this;
+}
+
+//**********************************
+int EmployeeAdd(Employee* this, LinkedList* pArrayListEmployee)
+{
+	int retCode = -1;
+	char bufferNombre[LENGTH];
+	int bufferHoras = 0;
+	int bufferId = 0;
+	int bufferSalario = 0;
+
+
+	this = employee_new();
+
+	getAlphaString(bufferNombre, "\nIngrese el nomnbre del empleado: ", "Error. Intente nuevamente");
+	getNaturalNumber(&bufferHoras,"\nIngrese el numero de horas: ", "Error debe ingresar solo numeros",3);
+	getNaturalNumber(&bufferSalario,"\nIngrese el salario: ", "Error debe ingresar solo numeros",3);
+	bufferId = generateId(pArrayListEmployee)
+	//bufferId = generateIdeEmployee();  // REVISAR EL TEMA DE LA SECUENCIA DE ID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	if(bufferNombre != NULL && bufferHoras != -1 && bufferSalario != -1 && bufferId >= 1)
+	{
+		employee_setNombre(this,bufferNombre);
+		employee_setHorasTrabajadas(this, bufferHoras);
+		employee_setSueldo(this, bufferSalario);
+		employee_setId(this, bufferId); // REVISAR EL TEMA DE LA SECUENCIA DE ID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		printf("\n EL EMPLEADO CARGADO FUE: ");
+		printf("\n ID %d \t NOMBRE %s \t HORAS %d \t SALARIO %d", this->id, this->nombre, this->horasTrabajadas, this->sueldo);
+
+		retCode = 0;
+	}
+	return retCode;
+}
+//***********************************
+
+int generateIdeEmployee()
+{
+    static int id=1001;
+
+    return id++;
+}
+
+//*************************************
+//*
+
+
+Employee* employee_newParametros(char* idStr,char* nombreStr,char* horasTrabajadasStr, char* sueldoStr)
+{
+Employee* this = NULL;
+
+	this = employee_new();
+	if(this != NULL)
+	{
+		if(employee_setNombre(this, nombreStr) ==0 &&
+				employee_setHorasTrabajadas(this,atoi(horasTrabajadasStr)) == 0 &&
+				employee_setSueldo(this, atoi(sueldoStr)) == 0 &&
+				employee_setIdTxt(this,idStr) == 0)
+		{
+			return this;
+		}else
+		{
+			this = NULL;
+		}
+	}
+return this;
+}
+
+//***************************************
+int employee_setNombre(Employee* this,char* nombre)
+{
+	int retCode = -1;
+	if(this != NULL && nombre != NULL)
+		{
+				retCode = 0;
+				strncpy(this->nombre,nombre,LENGTH);
+		}
+	return retCode;
+}
+
+//***************************************
+int employee_setHorasTrabajadas(Employee* this, int horasTrabajadas)
+{
+	int retCode = -1;
+	if(this != NULL && horasTrabajadas >= 0)
+	{
+		retCode = 0;
+		this->horasTrabajadas = horasTrabajadas;
+	}
+	return retCode;
+}
+
+//********************************************
+int employee_setSueldo(Employee* this,int sueldo)
+{
+	int retCode = -1;
+	if(this != NULL && sueldo >= 0)
+	{
+		retCode = 0;
+		this->sueldo = sueldo;
+	}
+	return retCode;
+}
+
+//*********************************************
+int employee_setId(Employee* this,int id)
+{
+	int retCode = -1;
+	if(this != NULL && id > 0)
+	{
+		retCode = 0;
+		this->id = id;
+	}
+	return retCode;
+}
+
+//*********************************************
+int employee_setIdTxt(Employee* this,char* id)
+{
+	int retorno = -1;
+	if(this != NULL && id != NULL)
+	{
+		if(esNumerica(id,10))
+		{
+			retorno = 0;
+			this->id = atoi(id);
+		}
+	}
+	return retorno;
+}
+
+//********************************************
+
+int employee_getId(Employee* this,int* id)
+{
+    int retCode=-1;
+    if(this!=NULL && id != NULL)
+    {
+        *id=this->id;
+        retCode=0;
+    }
+    return retCode;
+}
+
+//********************************************
+int employee_getNombre(Employee* this,char* nombre)
+{
+    int retCode=-1;
+    if(this!=NULL && nombre!=NULL)
+    {
+        strcpy(nombre,this->nombre);
+        retCode=0;
+    }
+    return retCode;
+}
+
+//*******************************************
+int employee_getHorasTrabajadas(Employee* this,int* horasTrabajadas)
+{
+    int retCode=-1;
+    if(this!=NULL && horasTrabajadas != NULL)
+    {
+        *horasTrabajadas=this->horasTrabajadas;
+        retCode=0;
+    }
+    return retCode;
+}
+
+//*******************************************
+int employee_getSueldo(Employee* this,int* sueldo)
+{
+    int retCode=-1;
+    if(this!=NULL && sueldo != NULL)
+    {
+        *sueldo=this->sueldo;
+        retCode=0;
+    }
+    return retCode;
+}
+
+//*******************************************
+/*int setEmployee(int id, char nombre, int horasTrabajadas, int sueldo, Employee* this)
+{
+	int retCode = -1;
+
+		if(id != NULL && nombre != NULL && horasTrabajadas != NULL && sueldo!= NULL && this != NULL)
+		{
+			if( employee_setId(this,id) == 0 &&
+				employee_setNombre(this,nombre) == 0 &&
+				employee_setSueldo(this,sueldo) ==0 &&
+				employee_setHorasTrabajadas(this,horasTrabajadas) == 0)
+			retCode = 0;
+		}
+
+	return retCode;
+}*/
+
+//***********************************************
+//*******************************************
+int getEmployee(int* id, char* nombre, int* horasTrabajadas, int* sueldo, Employee* this)
+{
+	int retCode = -1;
+
+		if(id != NULL && nombre != NULL && horasTrabajadas != NULL && sueldo!= NULL && this != NULL)
+		{
+			if( employee_getId(this,id) == 0 &&
+				employee_getNombre(this,nombre) == 0 &&
+				employee_getSueldo(this,sueldo) ==0 &&
+				employee_getHorasTrabajadas(this,horasTrabajadas) == 0)
+			retCode = 0;
+		}
+
+	return retCode;
+}
+//*******************************************
+int printEmployee(Employee* this)
+{
+	int retCode = -1;
+	int auxId;
+	int auxSueldo;
+	int auxHoras;
+	char bufferNombre[128];
+
+		if(this != NULL)
+		{
+			getEmployee(&auxId, bufferNombre, &auxHoras, &auxSueldo, this);
+			printf("\n%4d - %-20s - %-6d  - $%6d", auxId,bufferNombre, auxHoras,auxSueldo);
+		}
+	return retCode;
+}
+
+//*****-------------------------------------------------------------------------
+static int esNumerica(char* cadena, int limite)
+{
+	int retorno = -1; // ERROR
+	int i;
+	if(cadena != NULL && limite > 0)
+	{
+		retorno = 1; // VERDADERO
+		for(i=0;i<limite && cadena[i] != '\0';i++)
+		{
+			if(i==0 && (cadena[i] == '+' || cadena[i] == '-'))
+			{
+				continue;
+			}
+			if(cadena[i] < '0'||cadena[i] > '9')
+			{
+				retorno = 0;
+				break;
+			}
+			//CONTINUE
+		}
+		//BREAK
+	}
+	return retorno;
+}
+
+//*********************************************************
+int searchId(int id, LinkedList* lista)
+{
+    int index = -1;
+    Employee* pAuxEmployee;
+
+    if(lista !=NULL)
+    {
+        for(int i=0; i<ll_len(lista); i++)
+        {
+        	pAuxEmployee = (Employee*)ll_get(lista,i);
+
+            if(pAuxEmployee !=NULL && pAuxEmployee->id == id)
+            {
+            	index = i;
+                break;
+            }
+        }
+    }
+
+    return index;
+}
+
+//************************************************************
+
+/** \brief Carga de manera incremental el ID de un empleado
+ *
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int generateId(LinkedList* pArrayListEmployee)
+{
+    Employee* pAuxEmployee;
+    int Length;
+    int id;
+    int maxID = -1;
+    int i;
+    if(pArrayListEmployee != NULL)
+    {
+    	Length = ll_len(pArrayListEmployee);
+
+        for(i=0; i<Length; i++)
+        {
+            if(pAuxEmployee !=NULL)
+            {
+            	pAuxEmployee = ll_get(pArrayListEmployee, i);
+                employee_getId(pAuxEmployee, &id);
+
+                if(id > maxID)
+                {
+                    maxID = id;
+                }
+            }
+        }
+    }
+
+    maxID += 1;
+
+    return maxID;
+}

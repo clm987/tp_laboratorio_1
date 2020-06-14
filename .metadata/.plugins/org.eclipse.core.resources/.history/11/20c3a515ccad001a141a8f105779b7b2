@@ -1,0 +1,330 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "LinkedList.h"
+#include "Employee.h"
+#include "IOdata.h"
+#include "parser.h"
+
+/** \brief Carga los datos de los empleados desde el archivo data.csv (modo texto).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
+{
+	FILE* file;
+	int retCode = -1;
+	int length;
+
+	length = ll_len(pArrayListEmployee);
+
+	if(length == 0)
+	{
+		file = fopen(path,"r");
+
+		if(file == NULL)
+		{
+		 showMessage ("Ocurrio un error al abrir el archivo. Se cerrara la aplicacion");
+		}
+
+		if(!parser_EmployeeFromText(file , pArrayListEmployee))
+		{
+			retCode = 0;
+		}
+
+		fclose(file);
+
+		if(retCode == 0)
+		{
+		showMessage("Base de empleados cargada con exito!");
+		}
+	}
+	else
+	{
+		showMessage("La base de empleados ya fue cargada previamente!");
+	}
+    return retCode;
+}
+
+/** \brief Carga los datos de los empleados desde el archivo data.csv (modo binario).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
+{
+	FILE* file;
+	int retCode = -1;
+	int length;
+
+	length = ll_len(pArrayListEmployee);
+
+	if(length == 0)
+	{
+		if(path != NULL && pArrayListEmployee != NULL)
+		{
+			file = fopen(path,"rb");
+
+			if(file == NULL)
+			{
+			 showMessage ("Ocurrio un error al abrir el archivo. Se cerrara la aplicacion");
+			}
+
+			if(!parser_EmployeeFromBinary(file, pArrayListEmployee))
+			{
+				retCode = 0;
+			}
+		}
+		fclose(file);
+	}
+	else
+	{
+		showMessage("La base de empleados ya fue cargada previamente!");
+	}
+
+	return retCode;
+}
+
+/** \brief Alta de empleados
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_addEmployee(LinkedList* pArrayListEmployee)
+{
+	int retCode = -1;
+	Employee* this = NULL;
+
+	if(EmployeeAdd(this, pArrayListEmployee)==0)
+	{
+		retCode = 0;
+	}
+    return retCode;
+}
+
+/** \brief Modificar datos de empleado
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_editEmployee(LinkedList* pArrayListEmployee)
+{
+	int retCode = 0;
+	int option;
+	int Id;
+	int index;
+	int length;
+	char confirmation;
+	char bufferNombre[128];
+	int bufferHoras;
+	int bufferSueldo;
+	char subMenu[] =
+					"\n\n1 MODIFICAR NOMBRE\
+					 \n\n2 MODIFICAR HORAS\
+					 \n\n3 MODIFICAR SUELDO\
+					 \n\n4 VOLVER AL MENU PRINCIPAL\
+					 \n\n Ingrese una opcion: ";
+	char mensajeError[] = "Error. Debe ingresar un opcion valida";
+	Employee* this = NULL;
+
+	length = ll_len(pArrayListEmployee);
+
+
+	if(length == 0)
+	{
+		showMessage("No hay empledos cargados aun.");
+	}
+	else
+	{
+	getNaturalNumber(&Id,"\nIngrese el ID del Empleado a modificar: ", "Error debe ingresar solo numeros",3);
+	index = searchId(Id, pArrayListEmployee);
+
+		while(index == -1)
+		{
+			showMessage("ID inexistente. Ingrese un ID válido");
+			getNaturalNumber(&Id,"\nIngrese el ID del Empleado a modificar: ", "Error debe ingresar solo numeros",3);
+			index = searchId(Id, pArrayListEmployee);
+
+		}
+			this =(Employee*)ll_get(pArrayListEmployee,index);
+			printEmployee(this);
+			confirmation =  getConfirmation("\nEs este el empleado que desea modificar? Ingrese S o N: ");
+			 if(confirmation == 's')
+			 {
+				 while(option != 4)
+					{
+					getValidOption(&option, subMenu,mensajeError,1,4,3);
+						switch(option)
+						{
+						case 1:
+							getAlphaString(bufferNombre, "\nIngrese el nuevo nombre del empleado: ", "Error. Intente nuevamente");
+							employee_setNombre(this,bufferNombre);
+							showMessage("Modificacion relizada con exito");
+							printEmployee(this);
+						break;
+						case 2:
+							getNaturalNumber(&bufferHoras,"\nIngrese el nuevo numero de horas: ", "Error debe ingresar solo numeros",3);
+							employee_setHorasTrabajadas(this,bufferHoras);
+							showMessage("Modificacion relizada con exito");
+							printEmployee(this);
+						break;
+						case 3:
+							getNaturalNumber(&bufferSueldo,"\nIngrese el nuevo salario: ", "Error debe ingresar solo numeros",3);
+							employee_setSueldo(this,bufferSueldo);
+							showMessage("Modificacion relizada con exito");
+							printEmployee(this);
+						break;
+						case 4:
+							break;
+						}
+					}
+			retCode = 0;
+			 }
+	}
+    return retCode;
+}
+
+/** \brief Baja de empleado
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_removeEmployee(LinkedList* pArrayListEmployee)
+{
+	int retCode = -1;
+	int length;
+	int id;
+	int index;
+	char confirmation;
+	Employee* this;
+
+	length = ll_len(pArrayListEmployee);
+
+		if(length == 0)
+		{
+			showMessage("No hay empledos cargados aun.");
+		}
+		else
+		{
+			getNaturalNumber(&id,"\nIngrese el ID del Empleado a eliminar: ", "Error debe ingresar solo numeros",3);
+			index = searchId(id, pArrayListEmployee);
+			while(index == -1)
+			{
+				showMessage("ID inexistente. Ingrese un ID válido");
+				getNaturalNumber(&id,"\nIngrese el ID del Empleado a eliminar: ", "Error debe ingresar solo numeros",3);
+				index = searchId(id, pArrayListEmployee);
+			}
+
+		this =(Employee*)ll_get(pArrayListEmployee,index);
+		printEmployee(this);
+		confirmation =  getConfirmation("\nEs este el empleado que desea eliminar? Ingrese S o N: ");
+			if(confirmation == 's')
+			{
+				ll_remove(pArrayListEmployee,index);
+				retCode = 0;
+				showMessage("Empleado eliminado con exito");
+			}
+			else
+			{
+				showMessage("Baja de empleado cancelada.");
+			}
+		}
+    return retCode;
+}
+
+/** \brief Listar empleados
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_ListEmployee(LinkedList* pArrayListEmployee)
+{
+	int retCode = -1;
+	int length;
+
+	length = ll_len(pArrayListEmployee);
+
+	if(pArrayListEmployee != NULL)
+	{
+		if(length == 0)
+		{
+			showMessage("No hay empledos cargados aun.");
+		}
+		else
+		{
+			if(listEmployees(pArrayListEmployee, length)==0)
+			{
+				retCode = 0;
+			}
+		}
+	}
+    return retCode;
+}
+
+/** \brief Ordenar empleados
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_sortEmployee(LinkedList* pArrayListEmployee)
+{
+	int retCode = -1;
+	int option;
+	int length;
+
+	if(pArrayListEmployee != NULL)
+	{
+		length = ll_len(pArrayListEmployee);
+		if(length == 0)
+		{
+			showMessage("Aun no hay empleados cargados.");
+		}
+		else
+		{
+			if(sortEmployees(pArrayListEmployee,length)== 0)
+			{
+				retCode = 0;
+			}
+		}
+	}
+    return retCode;
+}
+
+/** \brief Guarda los datos de los empleados en el archivo data.csv (modo texto).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_saveAsText(char* path , LinkedList* pArrayListEmployee)
+{
+    return 1;
+}
+
+/** \brief Guarda los datos de los empleados en el archivo data.csv (modo binario).
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_saveAsBinary(char* path , LinkedList* pArrayListEmployee)
+{
+    return 1;
+}
+

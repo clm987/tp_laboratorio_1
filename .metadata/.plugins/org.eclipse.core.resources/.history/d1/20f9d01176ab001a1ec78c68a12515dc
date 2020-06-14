@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "LinkedList.h"
+#include "Controller.h"
+#include "Employee.h"
+#include "IOdata.h"
+
+//***********************************
+
+Employee* employee_new()
+{
+	Employee* this = (Employee*) malloc(sizeof(Employee));
+	if(this != NULL)
+	{
+		this->id = 0;
+		strcpy(this->nombre,"");
+		this->horasTrabajadas = 0;
+		this->sueldo = 0;
+
+	}
+	return this;
+}
+
+//**********************************
+int EmployeeAdd(Employee* this)
+{
+	int retCode = -1;
+	char bufferNombre[LENGTH];
+	int bufferHoras = 0;
+	int bufferId = 0;
+	int bufferSalario = 0;
+
+
+	this = employee_new();
+
+	getAlphaString(bufferNombre, "\nIngrese el nomnbre del empleado: ", "Error. Intente nuevamente");
+	getNaturalNumber(&bufferHoras,"\nIngrese el numero de horas: ", "Error debe ingresar solo numeros",3);
+	getNaturalNumber(&bufferSalario,"\nIngrese el salario: ", "Error debe ingresar solo numeros",3);
+	bufferId = generateIdeEmployee();
+
+	if(bufferNombre != NULL && bufferHoras != -1 && bufferSalario != -1 && bufferId >= 1)
+	{
+		employee_setNombre(this,bufferNombre);
+		employee_setHorasTrabajadas(this, bufferHoras);
+		employee_setSueldo(this, bufferSalario);
+		employee_setId(this, bufferId);
+		printf("\n EL EMPLEADO CARGADO FUE: ");
+		printf("\n ID %d \t NOMBRE %s \t HORAS %d \t SALARIO %d", this->id, this->nombre, this->horasTrabajadas, this->sueldo);
+
+		retCode = 0;
+	}
+	return retCode;
+}
+//***********************************
+
+int generateIdeEmployee()
+{
+    static int id=1;
+
+    return id++;
+}
+
+//*************************************
+//*
+
+
+Employee* employee_newParametros(char* idStr,char* nombreStr,char* horasTrabajadasStr, char* salarioStr)
+{
+Employee* this;
+
+	this = employee_new();
+
+	if(this != NULL)
+	{
+		employee_setNombre(this, nombreStr);
+
+
+
+
+
+
+
+		strncpy(this->nombre,nombreStr,LENGTH);
+		sprintf(this->id,"%d",idStr);
+		sprintf(this->horasTrabajadas,"%d",horasTrabajadasStr);
+		sprintf(this->horasTrabajadas,"%d",horasTrabajadasStr);
+	}
+return this;
+}
+
+//***************************************
+int employee_setNombre(Employee* this,char* nombre)
+{
+	int retCode = -1;
+	if(this != NULL && nombre != NULL)
+		{
+				retCode = 0;
+				strncpy(this->nombre,nombre,LENGTH);
+		}
+	return retCode;
+}
+
+//***************************************
+int employee_setHorasTrabajadas(Employee* this,int horasTrabajadas)
+{
+	int retCode = -1;
+	if(this != NULL && horasTrabajadas >= 0)
+	{
+		retCode = 0;
+		this->horasTrabajadas = horasTrabajadas;
+	}
+	return retCode;
+}
+
+//********************************************
+int employee_setSueldo(Employee* this,int sueldo)
+{
+	int retCode = -1;
+	if(this != NULL && sueldo >= 0)
+	{
+		retCode = 0;
+		this->sueldo = sueldo;
+	}
+	return retCode;
+}
+
+//*********************************************
+int employee_setId(Employee* this,int id)
+{
+	int retCode = -1;
+	if(this != NULL && id > 0)
+	{
+		retCode = 0;
+		this->id = id;
+	}
+	return retCode;
+}
+
+
