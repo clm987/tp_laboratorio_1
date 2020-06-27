@@ -209,9 +209,23 @@ LinkedList* ll_clone(LinkedList* this);
                                 ( 0) Si ok
  */
 int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order);
-////////////////////////
+
+/** \brief Cuenta la cantidad de elementos con una caracteristica definida por una funcion recibida como parametro
+ * \param pList LinkedList* Puntero a la lista
+ * \param pFunc (*pFunc) Puntero a la funcion criterio de conteo
+ * \param order int  [1] Indica orden ascendente - [0] Indica orden descendente
+ * \return int Retorna  (-1) Error: si el puntero a la listas es NULL
+                                ( 0) Si ok
+ */
 int ll_count(LinkedList* this, int (*fn)(void* element));
-///////////////////////
+
+/** \brief Modifica todos los elementos de la lista en un campo en particular definidos por la funcion criterio recibida como parametro
+ * \param pList LinkedList* Puntero a la lista
+ * \param pFunc (*pFunc) Puntero a la funcion criterio que modifica el campo
+ * \param order int  [1] Indica orden ascendente - [0] Indica orden descendente
+ * \return int Retorna  (-1) Error: si el puntero a la listas es NULL
+                                ( 0) Si ok
+ */
 LinkedList* ll_map(LinkedList* this, void (*fn)(void* element));
 
 //#endif /* LINKEDLIST_H_ */
