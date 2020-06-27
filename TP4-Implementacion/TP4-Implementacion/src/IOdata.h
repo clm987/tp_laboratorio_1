@@ -1,0 +1,93 @@
+/*
+ *NOMBRE:  IOdata.h
+ *DESCRIPCION: BIBLIOTECA DE FUNCIONES BASICAS DE IMPUT Y OUTPUT DE DATOS
+ *AUTOR: CARLOS LOPEZ
+ */
+
+#ifndef IODATA_H_
+#define IODATA_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+/**
+ * \brief : Funcion para obtener un entero natural
+ * \param : *input puntero a entero
+ * \return : retorna un entero para control de ejecución
+ */
+int getNaturalNumber(int* input, char* message, char* error, int chances);
+
+/**
+ * \brief : Funcion para obtener y validar un numero con decimales
+ * \param : *input puntero a float
+ * \return : retorna un entero para control de ejecución
+ */
+int getFloatNumber(float* input, char* message, char* error, int chances);
+
+
+/**
+ * \brief : Funcion para obtener y validar un numero con signo
+ * \param : *input puntero a entero
+ * \return : retorna un entero para control de ejecución
+ */
+int getSignedNumber(int* input, char* message, char* error, int chances);
+
+/**
+ * \brief : Funcion para obtener y validar una opcion de un menu de opciones
+ * \param : *input puntero a entero con el numero de opcion
+ * \param min: entero que representa el valor minimo a ingresar
+ * \param max entero que representa el valor maximo a ingresar
+ * \param chances entero que representa la cantidad de reintentos posibles
+ * \return : retorna un entero para control de ejecución
+ */
+int getValidOption(int* input, char message[],char error[], int min, int max, int chances);
+
+/**
+ * \brief : Funcion para obtener y validar un dni alfanumerico
+ * \param : *string puntero a char para almacenar los datos recibidos
+ * \param *message mensaje para el usuario
+ * \param *error mensaje para el usuario cuando ingresa algo no valido
+ * \return : no retorna nada
+ */
+void getAlphaNumericDni(char* string, char* message, char* error);
+
+/**
+ * \brief : Funcion para obtener y validar un string solo de letras
+ * \param : *string puntero a char para almacenar los datos recibidos
+ * \param *message mensaje para el usuario
+ * \param *error mensaje para el usuario cuando ingresa algo no valido
+ * \return : no retorna nada
+ */
+void getAlphaString(char* string, char* message, char* error);
+
+/**
+ * \brief : Funcion para obtener y validar un string alfanumerico
+ * \param : *string puntero a char para almacenar los datos recibidos
+ * \param *message mensaje para el usuario
+ * \param *error mensaje para el usuario cuando ingresa algo no valido
+ * \return : no retorna nada
+ */
+void getAlphaNumericString(char* string, char* message, char* error);
+
+/**
+ * \brief : Funcion para mostrar un mensaje en un formato estandarizado
+ * \param *message mensaje para el usuario
+ * \return : no retorna nada
+ */
+void showMessage (char* message);
+
+/**
+ * \brief : Funcion para mostrar un mensaje en un formato estandarizado
+ * \param a: numero de tipo float a dividir (dividendo)
+ * \param b: numero de tipo float divisor
+ * \return : retorna un float con el resultado de la division
+ */
+float divide(float a , float b);
+/**
+ *
+ */
+void getComplexString(char* string, char* message, char* error);
+
+#endif /* IODATA_H_ */

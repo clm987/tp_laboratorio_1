@@ -1,0 +1,481 @@
+/*
+ *NOMBRE:  IOdata.c
+ *DESCRIPCION: BIBLIOTECA DE FUNCIONES BASICAS DE IMPUT Y OUTPUT DE DATOS
+ *AUTOR: CARLOS LOPEZ
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "IOdata.h"
+
+static int getInt(int* imputData);
+static int justNumber(char* string);
+static int getFloat(float* imputData);
+static int floatNumber(char* string);
+static int getSignedInt(int* inputData);
+static int signedNumber(char* string);
+static int justAlpha(char str[]);
+static int justDNI(char* string, int length);
+static int justregularKeys(char* str, int max);
+static int specialKeys(char* str, int max);
+
+
+int getNaturalNumber(int* input, char* message, char* error, int chances)
+{
+	int retCode = -1;
+	int num;
+	if (input != NULL && message != NULL && error != NULL && chances >= 0)
+	{
+		do
+		{
+			printf("%s", message);
+			fflush(stdin);
+			if (!getInt(&num))
+			{
+				break;
+			}
+			chances--;
+			printf("%s",error);
+			fflush(stdin);
+		}while(chances>0);
+
+		 if(chances>0)
+		 {
+			 retCode=0;
+			 *input = num;
+		 }
+	}
+	if(chances==0)
+	{
+	 printf("Se agotaron los intentos, comience nuevamente!\n");
+	}
+	return retCode;
+}
+
+
+static int getInt(int* inputData)
+{
+	int retorno = -1;
+	char buffer[64];
+	fgets(buffer, sizeof(buffer), stdin);
+	buffer[strlen(buffer)-1] = '\0';
+		if(!justNumber(buffer))
+		{
+		*inputData = atoi(buffer);
+		retorno = 0;
+		}
+	return retorno;
+}
+
+
+static int justNumber(char* string)
+{
+	int retorno = -1;
+	int i = 0;
+
+	if(string != NULL && strlen(string) != 0)
+	{
+		while(string[i] !='\0')
+		{
+			if(string[i] <'0' || string[i] >'9')
+				{break;}
+		i++;
+		}
+
+		if(string[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
+
+int getFloatNumber(float* input, char* message, char* error, int chances)
+{
+	int retCode = -1;
+	float num;
+	if (input != NULL && message != NULL && error != NULL && chances >= 0)
+	{
+		do
+		{
+			printf("%s", message);
+			fflush(stdin);
+			if (!getFloat(&num))
+			{
+				break;
+			}
+			chances--;
+			printf("%s",error);
+		}while(chances>0);
+
+		 if(chances>0)
+		 {
+			 retCode=0;
+			 *input = num;
+		 }
+
+	}
+	if(chances==0)
+	{
+	 printf("Se agotaron los intentos, comience nuevamente!\n");
+	}
+	return retCode;
+}
+
+
+static int getFloat(float* imputData)
+{
+	int retorno = -1;
+	char buffer[64];
+	fgets(buffer, sizeof(buffer), stdin);
+	buffer[strlen(buffer)-1] = '\0';
+		if(!floatNumber(buffer))
+		{
+		*imputData = atof(buffer);
+		retorno = 0;
+		}
+	return retorno;
+}
+
+
+static int floatNumber(char* string)
+{
+	int retorno = -1;
+	int i = 0;
+
+	if(string != NULL)
+	{
+		while(string[i] !='\0')
+		{
+			if((string[i] <'0' || string[i] >'9') && string[i]!='.')
+				{break;}
+		i++;
+		}
+
+		if(string[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
+
+int getSignedNumber(int* input, char* message, char* error, int chances)
+{
+	int retCode = -1;
+	int num;
+	if (input != NULL && message != NULL && error != NULL && chances >= 0)
+	{
+		do
+		{
+			printf("%s", message);
+			fflush(stdin);
+			if (!getSignedInt(&num))
+			{
+				break;
+			}
+			chances--;
+			printf("%s",error);
+		}while(chances>0);
+
+		 if(chances>0)
+		 {
+			 retCode=0;
+			 *input = num;
+		 }
+
+	}
+	if(chances==0)
+	{
+	 printf("Se agotaron los intentos, comience nuevamente!\n");
+	}
+	return retCode;
+}
+
+
+static int getSignedInt(int* inputData)
+{
+	int retorno = -1;
+	char buffer[64];
+	fgets(buffer, sizeof(buffer), stdin);
+	buffer[strlen(buffer)-1] = '\0';
+		if(!signedNumber(buffer))
+		{
+		*inputData = atoi(buffer);
+		retorno = 0;
+		}
+	return retorno;
+}
+
+
+static int signedNumber(char* string)
+{
+	int retorno = -1;
+	int i = 0;
+
+	if(string != NULL)
+	{
+		while(string[i] !='\0')
+		{
+
+			if(i == 0)
+			{
+				if((string[i] <'0' || string[i] >'9') && string[i]!='-' && string[i]!='+')
+				{break;}
+			}else if(string[i] <'0' || string[i] >'9')
+			{break;}
+		i++;
+		}
+
+		if(string[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
+
+void getAlphaString(char* string, char* message, char* error)
+{
+	char buffer[100];
+    printf("\n%s", message);
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    buffer[strlen(buffer)-1] = '\0';
+
+    while(justAlpha(buffer)==-1 || strlen(buffer) == 0)
+    {
+    	printf("\n%s", error);
+    	fgets(buffer, sizeof(buffer), stdin);
+        buffer[strlen(buffer)-1] = '\0';
+    }
+    strcpy(string, buffer);
+
+}
+
+static int justAlpha(char* str)
+{
+	int i=0;
+	int retCode = -1;
+	    while(str[i] != '\0')
+	    {
+
+	    	if(i == 0)
+	    	{
+					if(((str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z')))
+					{break;}
+	    	}else if((str[i] != ' ') && ((str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z')))
+			{break;}
+	        i++;
+	    }
+
+	    if(str[i] == '\0')
+	    {
+	    	retCode = 0;
+	    }
+
+	    return retCode;
+}
+
+int getValidOption(int* input, char message[],char error[], int min, int max, int chances)
+{
+	int retCode = -1;
+	int num;
+		if (input != NULL && message != NULL && error != NULL && min < max && chances >= 0)
+		{
+			do
+			{
+				printf("%s", message);
+				fflush(stdin);
+				if (!getInt(&num))
+				{
+					if(num >= min && num <= max)
+					{
+					break;
+					}
+				}
+				chances--;
+				printf("%s",error);
+				fflush(stdin);
+			}while(chances>0);
+
+			 if(chances>0)
+			 {
+				 retCode=0;
+				 *input = num;
+			 }
+		}
+		if(chances==0)
+		{
+		fflush(stdin);
+		printf("\nSe agotaron los reintentos, comience nuevamente!\n");
+		}
+		return retCode;
+}
+
+void showMessage (char* message)
+{
+	system("cls");
+	printf("*                                                               *\n");
+	printf("*---------------------------------------------------------------*\n");
+	printf(" %s\n", message);
+	printf("*---------------------------------------------------------------*\n");
+	printf("*                                                               *\n");
+}
+
+void getAlphaNumericDni(char* string, char* message, char* error)
+{
+	char buffer[100];
+	int length;
+    printf("\n%s", message);
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    length = strlen(buffer);
+    buffer[length-1] = '\0';
+
+    while((justDNI(buffer, length) ==-1) || strlen(buffer) == 0)
+    {
+    	printf("\n%s", error);
+    	fflush(stdin);
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strlen(buffer)-1] = '\0';
+    }
+
+    strcpy(string, buffer);
+}
+
+
+static int justDNI(char* str, int max)
+{
+	int retorno = -1;
+	int i = 0;
+	if(str != NULL && max <12)
+	{
+		while(str[i] !='\0')
+		{
+	    	if(i == 0)
+	    	{
+				if((str[i] < '0' || str[i] > '9'))
+					{break;}
+	    	}else if((str[i] != '.') && ((str[i] < '0' || str[i] > '9')))
+					{break;}
+	        i++;
+		}
+
+		if(str[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
+
+void getAlphaNumericString(char* string, char* message, char* error)
+{
+	char buffer[100];
+	int length;
+    printf("\n%s", message);
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    length = strlen(buffer);
+    buffer[length-1] = '\0';
+
+    while(justregularKeys(buffer, length) ==-1)
+    {
+    	printf("\n%s", error);
+    	fflush(stdin);
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strlen(buffer)-1] = '\0';
+        length = strlen(buffer);
+    }
+
+    strcpy(string, buffer);
+}
+
+
+static int justregularKeys(char* str, int max)
+{
+	int retorno = -1;
+	int i = 0;
+	if(str != NULL && max <12)
+	{
+		while(str[i] !='\0')
+		{
+	    	if(i == 0)
+	    	{
+				if((str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z') && (str[i] < '0' || str[i] > '9'))
+					{break;}
+	    	}else if((((str[i] == ' ')||(str[i] == '-')||(str[i] == '.')) && (str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z') && (str[i] < '0' || str[i] > '9')))
+					{break;}
+	        i++;
+		}
+
+		if(str[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
+
+float divide(float a , float b)
+{
+	float retorno;
+	if (b == 0)
+	{
+		retorno = -1;
+	}
+	else if(a == 0)
+	{
+		retorno = 0;
+	}
+	else
+	{
+		retorno = a / b;
+	}
+	return retorno;
+}
+
+void getComplexString(char* string, char* message, char* error)
+{
+	char buffer[100];
+	int length;
+    printf("\n%s", message);
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    length = strlen(buffer);
+    buffer[length-1] = '\0';
+
+    while(specialKeys(buffer, length) ==-1)
+    {
+    	printf("\n%s", error);
+    	fflush(stdin);
+        fgets(buffer, sizeof(buffer), stdin);
+        buffer[strlen(buffer)-1] = '\0';
+        length = strlen(buffer);
+    }
+
+    strcpy(string, buffer);
+}
+
+
+static int specialKeys(char* str, int max)
+{
+	int retorno = -1;
+	int i = 0;
+	if(str != NULL && max <25)
+	{
+		while(str[i] !='\0')
+		{
+	    	if(i == 0)
+	    	{
+				if((str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z') && (str[i] < '0' || str[i] > '9'))
+					{break;}
+	    	}else if((((str[i] != '+')&&(str[i] != '_')&&(str[i] != ' ')&&(str[i] != '-')&&(str[i] != '.')) && (str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z') && (str[i] < '0' || str[i] > '9')))
+					{break;}
+	        i++;
+		}
+
+		if(str[i] =='\0')
+		{retorno = 0;}
+	}
+
+	return retorno;
+}
